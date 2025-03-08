@@ -1,0 +1,18 @@
+services:
+  celery_redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+  celery_worker:
+    build: .
+    container_name: celery_worker
+    depends_on:
+      - celery_redis
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    working_dir: /app
+    command: celery -A app.celery_config worker --loglevel=info  # Explicit command
